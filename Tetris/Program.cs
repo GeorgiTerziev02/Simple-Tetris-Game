@@ -120,14 +120,20 @@ namespace Tetris
                     {
                         if (CurrentFigureCol >= 1)
                         {
-                            CurrentFigureCol--;
+                            if (CheckForFiguresLeft())
+                            {
+                                CurrentFigureCol--;
+                            }
                         }
                     }
                     if (key.Key == ConsoleKey.RightArrow || key.Key == ConsoleKey.D)
                     {
                         if (CurrentFigureCol < TetrisCols - CurrentFigure.GetLength(1))
                         {
-                            CurrentFigureCol++;
+                            if (CheckForFiguresRight())
+                            {
+                                CurrentFigureCol++;
+                            }
                         }
                     }
                     if (key.Key == ConsoleKey.DownArrow || key.Key == ConsoleKey.S)
@@ -143,7 +149,7 @@ namespace Tetris
                     }
                 }
 
-                if (Frame % (FramesToMoveFigure - Level)== 0)
+                if (Frame % (FramesToMoveFigure - Level) == 0)
                 {
                     CurrentFigureRow++;
                     Frame = 1;
@@ -191,7 +197,33 @@ namespace Tetris
             }
         }
 
-        private static void UpdateLevel()
+        private static bool CheckForFiguresLeft()
+        {
+            for (int row = 0; row < CurrentFigure.GetLength(0); row++)
+            {
+                if (CurrentFigure[row, 0] && TetrisField[CurrentFigureRow + row, CurrentFigureCol - 1])
+                {
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
+        private static bool CheckForFiguresRight()
+        {
+            for (int row = 0; row < CurrentFigure.GetLength(0); row++)
+            {
+                if (CurrentFigure[row, CurrentFigure.GetLength(1) - 1] && TetrisField[CurrentFigureRow + row, CurrentFigureCol + CurrentFigure.GetLength(1)])
+                {
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
+        static void UpdateLevel()
         {
             if (Score <= 0)
             {
@@ -212,7 +244,7 @@ namespace Tetris
             }
         }
 
-        private static void RotateCurrentFigure()
+        static void RotateCurrentFigure()
         {
             var newFigure = new bool[CurrentFigure.GetLength(1), CurrentFigure.GetLength(0)];
 
